@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "553923721998",
+    "project_id": "sigma-chat-fd893",
+    "storage_bucket": "sigma-chat-fd893.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:553923721998:android:8294a433ec137072b6b55f",
+        "android_client_info": {
+          "package_name": "com.example.sgima_chat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdbwZKCiqwkFVOY36rKU6hDrLeyFWaa54"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
