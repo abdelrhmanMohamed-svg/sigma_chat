@@ -1,3 +1,3 @@
 class AppRoutes {
-  static const String chatRoutePage = "/";
+static const String chatRoutePage = "/";
 }

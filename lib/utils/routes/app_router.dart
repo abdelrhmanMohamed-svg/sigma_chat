@@ -11,7 +11,12 @@ class AppRouter {
       default:
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
-            create: (context) => ChatCubit(),
+            create: (context) {
+              final chatCubit = ChatCubit();
+              chatCubit.startSession();
+              chatCubit.getMessages();
+              return chatCubit;
+            },
             child: const ChatPage(),
           ),
         );

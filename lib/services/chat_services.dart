@@ -1,21 +1,25 @@
 import 'package:firebase_ai/firebase_ai.dart';
-import 'package:flutter/widgets.dart';
 
 abstract class ChatServices {
-  Future<void> sentPrompt(String prompt);
+  Future<String?> sentMessage(String message);
+  void startSession();
 }
 
 class ChatServicesImple implements ChatServices {
   final model = FirebaseAI.googleAI().generativeModel(
     model: 'gemini-2.5-flash',
   );
+  late ChatSession chatSession;
 
   @override
-  Future<void> sentPrompt(String prompt) async {
-    final promptContent = [Content.text(prompt)];
+  Future<String?> sentMessage(String message) async {
+    final messageContent = Content.text(message);
+    final response = await chatSession.sendMessage(messageContent);
+    return response.text;
+  }
 
-    // To generate text output, call generateContent with the text input
-    final response = await model.generateContent(promptContent);
-    debugPrint(response.text);
+  @override
+  void startSession() {
+    chatSession = model.startChat();
   }
 }
