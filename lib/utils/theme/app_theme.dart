@@ -12,22 +12,21 @@ class AppTheme {
       backgroundColor: AppColor.background,
     ),
     inputDecorationTheme: InputDecorationTheme(
-      
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: AppColor.black),
+        borderRadius: BorderRadius.circular(14.0),
+        borderSide: BorderSide.none,
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: AppColor.black),
+        borderRadius: BorderRadius.circular(14.0),
+        borderSide: BorderSide.none,
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: AppColor.black),
+        borderRadius: BorderRadius.circular(14.0),
+        borderSide: BorderSide.none,
       ),
       errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: AppColor.red),
+        borderRadius: BorderRadius.circular(14.0),
+        borderSide: BorderSide.none,
       ),
       fillColor: AppColor.primary,
       filled: true,

@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sgima_chat/models/message_model.dart';
 import 'package:sgima_chat/services/chat_services.dart';
 import 'package:sgima_chat/services/hive_local_database.dart';
+import 'package:sgima_chat/services/native_services.dart';
 import 'package:sgima_chat/utils/app_constants.dart';
 
 part 'chat_state.dart';
@@ -12,7 +15,9 @@ class ChatCubit extends Cubit<ChatState> {
 
   final _chatServices = ChatServicesImple();
   final _hiveServices = HiveLocalDatabase.getinstance;
+  final _nativeServices = NativeServicesImpl();
   late List<MessageModel> messages;
+  late File? selectedImage;
 
   Future<void> sendMessage(String message) async {
     emit(SendingMessage());
@@ -22,6 +27,7 @@ class ChatCubit extends Cubit<ChatState> {
         text: message,
         isUser: true,
         time: DateTime.now(),
+        image: selectedImage,
       );
       messages.add(userMessage);
       await _hiveServices.saveData<List<MessageModel>>(
@@ -66,5 +72,24 @@ class ChatCubit extends Cubit<ChatState> {
       return [];
     }
     return List<MessageModel>.from(messages);
+  }
+
+  Future<void> pickImageFormCamera() async {
+    final image = await _nativeServices.pickImageFromCamera();
+    if (image == null) return;
+    selectedImage = image;
+    emit(ImagePicked(selectedImage));
+  }
+
+  Future<void> pickImageFormGallery() async {
+    final image = await _nativeServices.pickImageFromGallery();
+    if (image == null) return;
+    selectedImage = image;
+    emit(ImagePicked(selectedImage));
+  }
+
+  void removeImage() {
+    selectedImage = null;
+    emit(ImagePicked(selectedImage));
   }
 }

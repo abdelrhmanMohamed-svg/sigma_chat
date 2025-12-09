@@ -24,3 +24,10 @@ final class MessageSentFailed extends ChatState {
   final String message;
   const MessageSentFailed(this.message);
 }
+
+final class ImagePicked extends ChatState {
+  final File? image;
+
+  const ImagePicked(this.image);
+
+}

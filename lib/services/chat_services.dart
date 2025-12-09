@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_ai/firebase_ai.dart';
 
 abstract class ChatServices {
@@ -12,8 +14,18 @@ class ChatServicesImple implements ChatServices {
   late ChatSession chatSession;
 
   @override
-  Future<String?> sentMessage(String message) async {
-    final messageContent = Content.text(message);
+  Future<String?> sentMessage(String message, [File? image]) async {
+    late Content messageContent;
+    if (image != null) {
+      final bytes = await image.readAsBytes();
+      messageContent = Content.multi([
+        TextPart(message),
+        InlineDataPart('image/jpeg', bytes),
+      ]);
+    } else {
+      messageContent = Content.text(message);
+    }
+
     final response = await chatSession.sendMessage(messageContent);
     return response.text;
   }

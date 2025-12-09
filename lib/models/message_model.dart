@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:hive/hive.dart';
 part 'message_model.g.dart';
 
@@ -11,12 +13,14 @@ class MessageModel {
   final bool isUser;
   @HiveField(3)
   final DateTime time;
+  @HiveField(4)
+  final File? image;
+
   MessageModel({
     required this.id,
     required this.text,
     required this.isUser,
     required this.time,
+    this.image,
   });
-
-  
 }
