@@ -7,47 +7,52 @@ import 'package:sgima_chat/utils/app_constants.dart';
 part 'chat_state.dart';
 
 class ChatCubit extends Cubit<ChatState> {
-  ChatCubit() : super(ChatInitial());
+  ChatCubit() : super(ChatInitial([]));
+  Map<String, bool> playedMessages = {};
 
   final _chatServices = ChatServicesImple();
   final _hiveServices = HiveLocalDatabase.getinstance;
-  final List<MessageModel> _messages = [];
+  late List<MessageModel> messages;
 
   Future<void> sendMessage(String message) async {
     emit(SendingMessage());
     try {
       final userMessage = MessageModel(
+        id: DateTime.now().toIso8601String(),
         text: message,
         isUser: true,
         time: DateTime.now(),
       );
-      _messages.add(userMessage);
+      messages.add(userMessage);
       await _hiveServices.saveData<List<MessageModel>>(
         AppConstants.messageKey,
-        _messages,
+        messages,
       );
 
-      emit(ChatSucess(_getMessages()));
+      emit(ChatSucess(List.from(messages), userMessage.id));
       final response = await _chatServices.sentMessage(message);
       final chatMessage = MessageModel(
+        id: DateTime.now().toIso8601String(),
         text: response ?? "there is no response",
         isUser: false,
         time: DateTime.now(),
       );
-      _messages.add(chatMessage);
+      messages.add(chatMessage);
       await _hiveServices.saveData<List<MessageModel>>(
         AppConstants.messageKey,
-        _messages,
+        messages,
       );
+      emit(ChatSucess(List.from(messages), chatMessage.id));
+
       emit(MessageSent());
-      emit(ChatSucess(_getMessages()));
     } catch (e) {
       emit(MessageSentFailed(e.toString()));
     }
   }
 
   Future<void> getMessages() async {
-    emit(ChatSucess(_getMessages()));
+    messages = _getMessages();
+    emit(ChatInitial(messages));
   }
 
   void startSession() {
@@ -56,6 +61,10 @@ class ChatCubit extends Cubit<ChatState> {
 
   List<MessageModel> _getMessages() {
     final messages = _hiveServices.getData(AppConstants.messageKey);
-    return messages.map((e) => e as MessageModel).toList();
+
+    if (messages == null) {
+      return [];
+    }
+    return List<MessageModel>.from(messages);
   }
 }

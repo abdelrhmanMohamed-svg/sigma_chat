@@ -8,7 +8,7 @@ class HiveLocalDatabase {
   static HiveLocalDatabase get instance => getinstance;
   static Future<void> hiveInit() async {
     await Hive.initFlutter();
-    Hive.registerAdapter(MessageModelAdapter());
+    Hive.registerAdapter((MessageModelAdapter()));
     await Hive.openBox(AppConstants.messageKey);
   }
 
@@ -17,7 +17,7 @@ class HiveLocalDatabase {
     await box.put(key, value);
   }
 
-  List<dynamic> getData(String key) {
+  dynamic getData(String key) {
     return box.get(key);
   }
 

@@ -7,7 +7,10 @@ environment:
   sdk: ^3.9.2
 
 dependencies:
+  animated_text_kit: ^4.3.0
+  bubble: ^1.2.1
   build_runner: ^2.4.13
+  chat_bubbles: ^1.7.0
   cupertino_icons: ^1.0.8
   firebase_ai: ^3.6.0
   firebase_core: ^4.2.1
