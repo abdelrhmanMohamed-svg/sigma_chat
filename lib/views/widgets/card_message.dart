@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
@@ -45,7 +47,7 @@ class _CardMessageState extends State<CardMessage> {
 
     // لو الرسالة تغيرت (رسالة جديدة)
     if (oldWidget.message.id != widget.message.id) {
-      if (widget.lastMessageId == widget.message.id) {
+      if (widget.lastMessageId == widget.lastMessageId) {
         _played = false;
       } else {
         _played = true;
@@ -83,7 +85,7 @@ class _CardMessageState extends State<CardMessage> {
                   ),
                   color: widget.message.isUser ? AppColor.blue : null,
                 ),
-                child: _buildContent(textStyle!),
+                child: _buildContent(textStyle!, size),
               ),
             ),
           ],
@@ -92,11 +94,24 @@ class _CardMessageState extends State<CardMessage> {
     );
   }
 
-  Widget _buildContent(TextStyle textStyle) {
+  Widget _buildContent(TextStyle textStyle, Size size) {
     if (widget.message.isUser) {
-      return Text(
-        widget.message.text,
-        style: textStyle.copyWith(color: AppColor.primary),
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (widget.message.imagePath != null)
+            Image.file(
+              File(widget.message.imagePath!),
+              height: size.height * 0.3,
+              width: double.infinity,
+              fit: BoxFit.contain,
+            ),
+          SizedBox(height: size.height * 0.01),
+          Text(
+            widget.message.text,
+            style: textStyle.copyWith(color: AppColor.primary),
+          ),
+        ],
       );
     }
 
@@ -104,7 +119,6 @@ class _CardMessageState extends State<CardMessage> {
       return Text(widget.message.text, style: textStyle);
     }
 
-    // ❤️ هنا السحر — لو الأنيميشن اتلعب مرة → مش هيتلعب تاني أبدًا مهما حصل rebuild
     if (_played) {
       return Text(widget.message.text, style: textStyle);
     }
@@ -114,7 +128,7 @@ class _CardMessageState extends State<CardMessage> {
       isRepeatingAnimation: false,
       onFinished: () {
         setState(() {
-          _played = true; // خلص → من هنا ورايح Text ثابت
+          _played = true;
         });
       },
       animatedTexts: [

@@ -1,10 +1,8 @@
-import 'dart:io';
-
 import 'package:hive/hive.dart';
 part 'message_model.g.dart';
 
 @HiveType(typeId: 0)
-class MessageModel {
+class MessageModel extends HiveObject {
   @HiveField(0)
   final String id;
   @HiveField(1)
@@ -14,13 +12,16 @@ class MessageModel {
   @HiveField(3)
   final DateTime time;
   @HiveField(4)
-  final File? image;
+  final String? imagePath;
+  @HiveField(5)
+  final String? filePath;
 
   MessageModel({
     required this.id,
     required this.text,
     required this.isUser,
     required this.time,
-    this.image,
+    this.imagePath,
+    this.filePath,
   });
 }

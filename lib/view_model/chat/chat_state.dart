@@ -29,5 +29,10 @@ final class ImagePicked extends ChatState {
   final File? image;
 
   const ImagePicked(this.image);
+}
 
+final class FilePicked extends ChatState {
+  final PlatformFile? file;
+
+  const FilePicked(this.file);
 }

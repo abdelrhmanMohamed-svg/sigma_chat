@@ -21,6 +21,7 @@ dependencies:
   hive_flutter: ^1.1.0
   hive_generator: ^2.0.1
   image_picker: ^1.2.1
+  file_picker: ^10.3.7
 
 dev_dependencies:
   flutter_lints: ^5.0.0

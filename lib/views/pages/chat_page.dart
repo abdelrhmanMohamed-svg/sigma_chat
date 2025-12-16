@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sgima_chat/utils/theme/app_color.dart';
@@ -5,6 +7,7 @@ import 'package:sgima_chat/view_model/chat/chat_cubit.dart';
 import 'package:sgima_chat/views/widgets/card_message.dart';
 import 'package:sgima_chat/views/widgets/custom_bottom_sheet_item.dart';
 import 'package:sgima_chat/views/widgets/empty_state.dart';
+import 'package:sgima_chat/views/widgets/selected_iamge_or_file.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -134,36 +137,20 @@ class _ChatPageState extends State<ChatPage> {
                   children: [
                     BlocBuilder<ChatCubit, ChatState>(
                       bloc: chatCubit,
-                      buildWhen: (previous, current) => current is ImagePicked,
+                      buildWhen: (previous, current) =>
+                          current is ImagePicked || current is FilePicked,
                       builder: (context, state) {
                         if (state is ImagePicked) {
                           final image = state.image;
                           if (image == null) return SizedBox.shrink();
-                          return Stack(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(10.0),
-                                child: Image.file(
-                                  image,
-                                  height: size.height * 0.13,
-                                  width: size.width * 0.3,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              Positioned(
-                                top: 3,
-                                right: 3,
-                                child: InkWell(
-                                  onTap: () => chatCubit.removeImage(),
-                                  child: CircleAvatar(
-                                    backgroundColor: AppColor.gray300,
-                                    radius: 15,
-                                    child: Icon(Icons.close),
-                                  ),
-                                ),
-                              ),
-                            ],
+                          return SelectedIamgeItem(
+                            image: image,
+                            onTap: () => chatCubit.removeImage(),
                           );
+                        } else if (state is FilePicked) {
+                          final file = state.file;
+                          if (file == null) return SizedBox.shrink();
+                          return Text(file.name);
                         }
                         return SizedBox.shrink();
                       },
@@ -186,6 +173,7 @@ class _ChatPageState extends State<ChatPage> {
                               if (textController.text.isEmpty) return;
                               await chatCubit.sendMessage(value);
                               textController.clear();
+                              chatCubit.removeImage();
                               //  _scrollToBottom();
                             },
                             keyboardType: TextInputType.multiline,
@@ -216,6 +204,7 @@ class _ChatPageState extends State<ChatPage> {
                                         textController.text,
                                       );
                                       textController.clear();
+                                      chatCubit.removeImage();
                                       //_scrollToBottom();
                                     },
                                     child: Icon(Icons.send),
@@ -246,7 +235,7 @@ class _ChatPageState extends State<ChatPage> {
       context: context,
       builder: (_) {
         return SizedBox(
-          height: size.height * 0.4,
+          height: size.height * 0.25,
           width: size.width,
           child: Padding(
             padding: const EdgeInsets.symmetric(
@@ -276,7 +265,10 @@ class _ChatPageState extends State<ChatPage> {
                     ),
                     SizedBox(width: size.width * 0.05),
                     CustomBottomSheetItem(
-                      onTap: () {},
+                      onTap: () async {
+                        chatCubit.pickFile();
+                        Navigator.pop(context);
+                      },
                       icon: Icons.file_open_outlined,
                       label: "Files",
                     ),

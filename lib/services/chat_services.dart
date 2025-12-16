@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_ai/firebase_ai.dart';
 
 abstract class ChatServices {
@@ -14,13 +15,25 @@ class ChatServicesImple implements ChatServices {
   late ChatSession chatSession;
 
   @override
-  Future<String?> sentMessage(String message, [File? image]) async {
+  Future<String?> sentMessage(
+    String message, [
+    File? image,
+    PlatformFile? file,
+  ]) async {
     late Content messageContent;
     if (image != null) {
       final bytes = await image.readAsBytes();
+
       messageContent = Content.multi([
         TextPart(message),
         InlineDataPart('image/jpeg', bytes),
+      ]);
+    } else if (file != null && file.bytes != null) {
+      final bytes = file.bytes;
+
+      messageContent = Content.multi([
+        TextPart(message),
+        InlineDataPart(file.extension!, bytes!),
       ]);
     } else {
       messageContent = Content.text(message);
