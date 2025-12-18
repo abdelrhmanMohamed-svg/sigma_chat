@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_ai/firebase_ai.dart';
+import 'package:sgima_chat/utils/app_helper.dart';
 
 abstract class ChatServices {
   Future<String?> sentMessage(String message);
@@ -28,16 +29,16 @@ class ChatServicesImple implements ChatServices {
         TextPart(message),
         InlineDataPart('image/jpeg', bytes),
       ]);
-    } else if (file != null && file.bytes != null) {
-      final bytes = file.bytes;
+    }
+    if (file != null) {
+      String pdfText = AppHelper.extractTextFromPdf(file.path!);
 
-      messageContent = Content.multi([
-        TextPart(message),
-        InlineDataPart(file.extension!, bytes!),
-      ]);
-    } else {
+      messageContent = Content.multi([TextPart(message), TextPart(pdfText)]);
+    }
+    if (image == null && file == null) {
       messageContent = Content.text(message);
     }
+  
 
     final response = await chatSession.sendMessage(messageContent);
     return response.text;
@@ -45,6 +46,9 @@ class ChatServicesImple implements ChatServices {
 
   @override
   void startSession() {
-    chatSession = model.startChat();
+  
+    chatSession = model.startChat(
+      
+    );
   }
 }

@@ -23,13 +23,14 @@ class MessageModelAdapter extends TypeAdapter<MessageModel> {
       time: fields[3] as DateTime,
       imagePath: fields[4] as String?,
       filePath: fields[5] as String?,
+      fileName: fields[6] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, MessageModel obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -41,7 +42,9 @@ class MessageModelAdapter extends TypeAdapter<MessageModel> {
       ..writeByte(4)
       ..write(obj.imagePath)
       ..writeByte(5)
-      ..write(obj.filePath);
+      ..write(obj.filePath)
+      ..writeByte(6)
+      ..write(obj.fileName);
   }
 
   @override

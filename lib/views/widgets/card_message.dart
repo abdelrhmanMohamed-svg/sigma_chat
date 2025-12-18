@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:bubble/bubble.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:sgima_chat/models/message_model.dart';
 import 'package:sgima_chat/utils/theme/app_color.dart';
+import 'package:sgima_chat/views/widgets/selected_file_item.dart';
 
 class CardMessage extends StatefulWidget {
   const CardMessage({
@@ -12,15 +14,13 @@ class CardMessage extends StatefulWidget {
     required this.message,
     this.isInitial = false,
     this.lastMessageId,
-    this.isPlayed = false,
-    this.onPlayed,
+    required this.file,
   });
 
   final MessageModel message;
   final bool isInitial;
   final String? lastMessageId;
-  final bool isPlayed;
-  final Function(String)? onPlayed;
+  final PlatformFile? file;
 
   @override
   State<CardMessage> createState() => _CardMessageState();
@@ -33,11 +33,10 @@ class _CardMessageState extends State<CardMessage> {
   void initState() {
     super.initState();
 
-    // لو الرسالة دي هي آخر رسالة جديدة، يبقى مسموح نلعب الأنيميشن مرة واحدة فقط
     if (widget.lastMessageId == widget.message.id) {
       _played = false;
     } else {
-      _played = true; // قديمة → خالص الأنيميشن خلاص
+      _played = true;
     }
   }
 
@@ -45,7 +44,6 @@ class _CardMessageState extends State<CardMessage> {
   void didUpdateWidget(CardMessage oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    // لو الرسالة تغيرت (رسالة جديدة)
     if (oldWidget.message.id != widget.message.id) {
       if (widget.lastMessageId == widget.lastMessageId) {
         _played = false;
@@ -99,14 +97,20 @@ class _CardMessageState extends State<CardMessage> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (widget.message.imagePath != null)
+          if (widget.message.imagePath != null) ...[
             Image.file(
               File(widget.message.imagePath!),
               height: size.height * 0.3,
               width: double.infinity,
               fit: BoxFit.contain,
             ),
-          SizedBox(height: size.height * 0.01),
+            SizedBox(height: size.height * 0.01),
+          ],
+
+          if (widget.file != null) ...[
+            SelectedFileItem(file: widget.file!, isSend: true),
+          ],
+
           Text(
             widget.message.text,
             style: textStyle.copyWith(color: AppColor.primary),

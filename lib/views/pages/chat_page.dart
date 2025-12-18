@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sgima_chat/utils/theme/app_color.dart';
@@ -7,7 +5,8 @@ import 'package:sgima_chat/view_model/chat/chat_cubit.dart';
 import 'package:sgima_chat/views/widgets/card_message.dart';
 import 'package:sgima_chat/views/widgets/custom_bottom_sheet_item.dart';
 import 'package:sgima_chat/views/widgets/empty_state.dart';
-import 'package:sgima_chat/views/widgets/selected_iamge_or_file.dart';
+import 'package:sgima_chat/views/widgets/selected_file_item.dart';
+import 'package:sgima_chat/views/widgets/selected_iamge.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -22,10 +21,10 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   void initState() {
+    super.initState();
     textController = TextEditingController();
     scrollController = ScrollController();
-
-    super.initState();
+    _scrollToBottom();
   }
 
   @override
@@ -36,13 +35,13 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      scrollController.animateTo(
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (scrollController.hasClients) {
+      scrollController.jumpTo(
         scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
       );
-    });
+    }
+  });
   }
 
   @override
@@ -90,7 +89,11 @@ class _ChatPageState extends State<ChatPage> {
                         separatorBuilder: (_, __) => SizedBox(height: 15),
                         itemBuilder: (context, index) {
                           final message = messages[index];
-                          return CardMessage(message: message, isInitial: true);
+                          return CardMessage(
+                            message: message,
+                            isInitial: true,
+                            file: chatCubit.selectedFile,
+                          );
                         },
                       );
                     }
@@ -105,6 +108,7 @@ class _ChatPageState extends State<ChatPage> {
                           return CardMessage(
                             message: messages[index],
                             lastMessageId: message.id,
+                            file: chatCubit.selectedFile,
                           );
                         },
                       );
@@ -114,7 +118,10 @@ class _ChatPageState extends State<ChatPage> {
                       itemCount: messages.length,
                       separatorBuilder: (_, __) => SizedBox(height: 15),
                       itemBuilder: (context, index) {
-                        return CardMessage(message: messages[index]);
+                        return CardMessage(
+                          message: messages[index],
+                          file: chatCubit.selectedFile,
+                        );
                       },
                     );
                   },
@@ -150,7 +157,10 @@ class _ChatPageState extends State<ChatPage> {
                         } else if (state is FilePicked) {
                           final file = state.file;
                           if (file == null) return SizedBox.shrink();
-                          return Text(file.name);
+                          return SelectedFileItem(
+                            file: file,
+                            onTap: () => chatCubit.removeFile(),
+                          );
                         }
                         return SizedBox.shrink();
                       },
@@ -174,7 +184,7 @@ class _ChatPageState extends State<ChatPage> {
                               await chatCubit.sendMessage(value);
                               textController.clear();
                               chatCubit.removeImage();
-                              //  _scrollToBottom();
+                                _scrollToBottom();
                             },
                             keyboardType: TextInputType.multiline,
                             maxLines: null,
@@ -205,7 +215,7 @@ class _ChatPageState extends State<ChatPage> {
                                       );
                                       textController.clear();
                                       chatCubit.removeImage();
-                                      //_scrollToBottom();
+                                      _scrollToBottom();
                                     },
                                     child: Icon(Icons.send),
                                   );

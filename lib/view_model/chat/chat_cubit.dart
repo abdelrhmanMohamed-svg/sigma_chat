@@ -32,6 +32,7 @@ class ChatCubit extends Cubit<ChatState> {
         time: DateTime.now(),
         imagePath: selectedImage?.path,
         filePath: selectedFile?.path,
+        fileName: selectedFile?.name,
       );
       messages.add(userMessage);
       await _hiveServices.saveData<List<MessageModel>>(

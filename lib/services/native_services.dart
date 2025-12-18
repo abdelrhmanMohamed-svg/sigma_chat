@@ -23,7 +23,8 @@ class NativeServicesImpl implements NativeServices {
   Future<PlatformFile?> pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['jpg', 'pdf', 'doc'],
+      withData: true,
+      allowedExtensions: ['pdf'],
     );
     if (result != null) {
       PlatformFile file = result.files.first;

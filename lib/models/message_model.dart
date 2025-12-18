@@ -15,6 +15,8 @@ class MessageModel extends HiveObject {
   final String? imagePath;
   @HiveField(5)
   final String? filePath;
+  @HiveField(6)
+  final String? fileName;
 
   MessageModel({
     required this.id,
@@ -23,5 +25,6 @@ class MessageModel extends HiveObject {
     required this.time,
     this.imagePath,
     this.filePath,
+    this.fileName,
   });
 }
